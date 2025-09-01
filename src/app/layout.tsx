@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Bebas_Neue, Inter } from 'next/font/google';
+import { Righteous, Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -9,7 +9,7 @@ const fontSans = Inter({
   variable: '--font-sans',
 });
 
-const fontHeading = Bebas_Neue({
+const fontHeading = Righteous({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-heading',

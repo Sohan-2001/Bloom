@@ -1,25 +1,14 @@
+
 "use client";
 
-import { Menu, Search, Bell } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { mockUsers } from "@/lib/data";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 
 const categories = ["All", "Painting", "Photography", "Writing", "Music", "Crafts"];
 
 export default function Header() {
-    const currentUser = mockUsers[0];
-
   return (
     <header className="sticky top-0 z-50 w-full bg-gradient-to-b from-black/90 to-transparent transition-all">
       <div className="container flex h-20 items-center">
@@ -42,40 +31,9 @@ export default function Header() {
             <Button variant="ghost" size="icon" className="text-white hover:text-white/80">
                 <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-white hover:text-white/80">
-                <Bell className="h-5 w-5" />
+            <Button variant="ghost" asChild className="text-white hover:text-white/80">
+                <Link href="/sign-in">Sign In</Link>
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-md">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                    <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{currentUser.name}</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {currentUser.bio}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  Settings
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             <Sheet>
                 <SheetTrigger asChild>

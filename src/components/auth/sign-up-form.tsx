@@ -24,8 +24,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore"; 
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
@@ -59,9 +60,23 @@ export function SignUpForm() {
     setIsLoading(true);
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-        await updateProfile(userCredential.user, {
+        const user = userCredential.user;
+
+        await updateProfile(user, {
             displayName: values.name,
+            photoURL: `https://picsum.photos/seed/${user.uid}/100/100` // Assign a random avatar
         });
+        
+        // Create a user document in Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          displayName: values.name,
+          email: values.email,
+          photoURL: user.photoURL,
+          bio: `A new member of the Bloom community!`, // Default bio
+          createdAt: new Date()
+        });
+        
         router.push('/');
     } catch (error: any) {
         console.error("Sign-up error:", error);

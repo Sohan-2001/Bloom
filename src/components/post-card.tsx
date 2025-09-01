@@ -1,9 +1,11 @@
+
 "use client";
 
 import * as React from 'react';
 import Image from 'next/image';
 import type { Post } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
+import Link from 'next/link';
 
 interface PostCardProps {
   post: Post;
@@ -22,9 +24,11 @@ export function PostCard({ post }: PostCardProps) {
             className="object-cover"
           />
            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-           <div className="absolute bottom-0 left-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-             <p className="text-white font-semibold text-sm">{post.user.name}</p>
-             <p className="text-white/80 text-xs">{post.caption.length > 50 ? post.caption.substring(0, 50) + '...' : post.caption}</p>
+           <div className="absolute bottom-0 left-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
+            <Link href={`/profile/${post.user.id}`} className="font-semibold text-sm text-white hover:underline">
+             {post.user.name}
+            </Link>
+             <p className="text-white/80 text-xs truncate">{post.caption}</p>
            </div>
         </div>
       </CardContent>

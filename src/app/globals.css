@@ -10,7 +10,7 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 98%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 84.2% 60.2%;
+    --primary: 0 92% 55%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -22,14 +22,14 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 84.2% 60.2%;
+    --ring: 0 92% 55%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 8%; /* Netflix black */
-    --foreground: 0 0% 98%; /* White text */
-    --card: 0 0% 12%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 8%;
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 98%;

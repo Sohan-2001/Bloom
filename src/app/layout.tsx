@@ -1,13 +1,18 @@
 import type { Metadata } from 'next';
-import { PT_Sans } from 'next/font/google';
+import { Bebas_Neue, Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 
-const ptSans = PT_Sans({
+const fontSans = Inter({
   subsets: ['latin'],
-  weight: ['400', '700'],
   variable: '--font-sans',
+});
+
+const fontHeading = Bebas_Neue({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-heading',
 });
 
 export const metadata: Metadata = {
@@ -21,16 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="dark">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body
         className={cn(
-          'min-h-screen bg-background font-body antialiased',
-          ptSans.variable
+          'min-h-screen bg-background font-sans antialiased',
+          fontSans.variable,
+          fontHeading.variable
         )}
       >
         {children}

@@ -11,8 +11,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Image from 'next/image';
-import { getFeaturedPosts, type FeaturedPost } from '@/lib/posts';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const categories = ["All", "Painting", "Photography", "Writing", "Music", "Crafts"];
 
@@ -52,52 +50,15 @@ const CategorySection = ({ category, posts }: { category: string, posts: Post[] 
 
 
 export default function Home() {
-  const [featuredPosts, setFeaturedPosts] = React.useState<FeaturedPost[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    const fetchPosts = async () => {
-      setIsLoading(true);
-      const posts = await getFeaturedPosts();
-      setFeaturedPosts(posts);
-      setIsLoading(false);
-    };
-
-    fetchPosts();
-  }, []);
-
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
-      <main className="flex-1">
-        <div className="relative h-[50vh] w-full mb-8">
-          {isLoading ? (
-             <Skeleton className="h-full w-full" />
-           ) : (
-            featuredPosts.length > 0 && (
-              <Carousel className="w-full h-full" opts={{ loop: true, align: "start" }}>
-                <CarouselContent className="h-full">
-                  {featuredPosts.map((post) => (
-                    <CarouselItem key={post.id} className="h-full">
-                      <div className="relative h-full w-full">
-                        <Image
-                          src={post.link}
-                          alt="Featured post"
-                          fill
-                          data-ai-hint="featured project"
-                          className="object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
-            )
-           )}
-        </div>
-
+      <main className="flex-1 pt-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-5xl md:text-7xl font-headline tracking-wider text-primary">Find Your Next Spark</h1>
+            <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">A vibrant community for artists, creators, and makers to share their work and find inspiration.</p>
+          </div>
           {categories.map(category => (
             <CategorySection key={category} category={category} posts={mockPosts} />
           ))}

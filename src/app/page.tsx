@@ -111,12 +111,8 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
-      <main className="flex-1 pt-24">
+      <main className="flex-1">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-5xl md:text-7xl font-headline tracking-wider text-primary">Find Your Next Spark</h1>
-            <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">A vibrant community for artists, creators, and makers to share their work and find inspiration.</p>
-          </div>
           <FeaturedSection />
           {categories.map(category => (
             <CategorySection key={category} category={category} posts={mockPosts} />

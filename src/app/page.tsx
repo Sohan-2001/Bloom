@@ -74,24 +74,26 @@ export default function Home() {
           {isLoading ? (
              <Skeleton className="h-full w-full" />
            ) : (
-           <Carousel className="w-full h-full" opts={{ loop: true, align: "start" }}>
-            <CarouselContent className="h-full">
-              {featuredPosts.map((post) => (
-                <CarouselItem key={post.id} className="h-full">
-                  <div className="relative h-full w-full">
-                    <Image
-                      src={post.link}
-                      alt="Featured post"
-                      fill
-                      data-ai-hint="featured project"
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
+            featuredPosts.length > 0 && (
+              <Carousel className="w-full h-full" opts={{ loop: true, align: "start" }}>
+                <CarouselContent className="h-full">
+                  {featuredPosts.map((post) => (
+                    <CarouselItem key={post.id} className="h-full">
+                      <div className="relative h-full w-full">
+                        <Image
+                          src={post.link}
+                          alt="Featured post"
+                          fill
+                          data-ai-hint="featured project"
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            )
            )}
         </div>
 

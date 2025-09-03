@@ -1,7 +1,10 @@
+
 "use server";
 
 import { suggestProjectPrompts } from "@/ai/flows/ai-suggested-project-prompts";
 import type { SuggestProjectPromptsOutput } from "@/ai/flows/ai-suggested-project-prompts";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 export async function getAiSuggestions(): Promise<SuggestProjectPromptsOutput> {
   // In a real application, you would fetch the current user's actual data.
@@ -26,5 +29,25 @@ export async function getAiSuggestions(): Promise<SuggestProjectPromptsOutput> {
     console.error("Error fetching AI suggestions:", error);
     // You might want to throw a more specific error or handle it differently
     throw new Error("Failed to get AI suggestions.");
+  }
+}
+
+export type FeaturedPost = {
+  id: string;
+  link: string;
+};
+
+export async function getFeaturedPosts(): Promise<FeaturedPost[]> {
+  try {
+    const featuredCollection = collection(db, "featured");
+    const snapshot = await getDocs(featuredCollection);
+    const posts = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      link: doc.data().link,
+    }));
+    return posts;
+  } catch (error) {
+    console.error("Error fetching featured posts:", error);
+    return [];
   }
 }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from 'react';
@@ -10,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Image from 'next/image';
+import { getFeaturedPosts, type FeaturedPost } from '@/lib/posts';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const categories = ["All", "Painting", "Photography", "Writing", "Music", "Crafts"];
 
@@ -49,35 +52,47 @@ const CategorySection = ({ category, posts }: { category: string, posts: Post[] 
 
 
 export default function Home() {
-  const featuredPosts = mockPosts.slice(0, 5);
+  const [featuredPosts, setFeaturedPosts] = React.useState<FeaturedPost[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      const posts = await getFeaturedPosts();
+      setFeaturedPosts(posts);
+      setIsLoading(false);
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1">
         <div className="relative h-[50vh] w-full mb-8">
-           <Carousel className="w-full h-full" opts={{ loop: true }}>
+          {isLoading ? (
+             <Skeleton className="h-full w-full" />
+           ) : (
+           <Carousel className="w-full h-full" opts={{ loop: true, align: "start" }}>
             <CarouselContent className="h-full">
-              {featuredPosts.map((post, index) => (
-                <CarouselItem key={index} className="h-full">
+              {featuredPosts.map((post) => (
+                <CarouselItem key={post.id} className="h-full">
                   <div className="relative h-full w-full">
                     <Image
-                      src={post.image}
-                      alt={post.caption}
+                      src={post.link}
+                      alt="Featured post"
                       fill
-                      data-ai-hint={post.imageHint}
+                      data-ai-hint="featured project"
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                     <div className="absolute bottom-10 left-10 text-white">
-                        <h2 className="text-4xl font-headline tracking-wider">{post.user.name}'s Project</h2>
-                        <p className="max-w-lg mt-2 text-lg">{post.caption}</p>
-                    </div>
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
           </Carousel>
+           )}
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

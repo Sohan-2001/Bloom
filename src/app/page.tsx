@@ -8,7 +8,7 @@ import type { Post } from '@/lib/data';
 import Header from '@/components/layout/header';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Plus } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Image from 'next/image';
 import { getFeaturedPosts, type FeaturedPost } from './actions';
@@ -81,11 +81,17 @@ const CategorySection = ({ category, posts }: { category: string, posts: Post[] 
     <section className="py-6 md:py-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-headline tracking-wider">{category === "All" ? "Popular" : category}</h2>
-        <Button variant="link" asChild>
-          <Link href={`/category/${category.toLowerCase()}`}>
-            See All <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
+        <div className="flex items-center space-x-4">
+            <Button variant="outline">
+                <Plus className="mr-2 h-4 w-4" />
+                Upload a post
+            </Button>
+            <Button variant="link" asChild>
+            <Link href={`/category/${category.toLowerCase()}`}>
+                See All <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+            </Button>
+        </div>
       </div>
       <Carousel
         opts={{

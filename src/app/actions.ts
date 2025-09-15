@@ -139,11 +139,10 @@ export async function getPosts(): Promise<Post[]> {
                   createdAt: commentCreatedAtTimestamp ? {
                     seconds: commentCreatedAtTimestamp.seconds,
                     nanoseconds: commentCreatedAtTimestamp.nanoseconds,
-                } : null,
+                  } : null,
                 };
               })
             );
-
 
             return {
                 id: p.id,
@@ -200,8 +199,12 @@ export async function addComment(postId: string, userId: string, commentText: st
         });
         
         revalidatePath('/');
-        revalidatePath(`/category/${category.toLowerCase()}`);
-        revalidatePath(`/profile/${profileUserId}`);
+        if (category) {
+            revalidatePath(`/category/${category.toLowerCase()}`);
+        }
+        if (profileUserId) {
+            revalidatePath(`/profile/${profileUserId}`);
+        }
         
         return { success: true };
     } catch (error) {

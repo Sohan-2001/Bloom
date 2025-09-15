@@ -8,7 +8,7 @@ import Header from '@/components/layout/header';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Heart } from 'lucide-react';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Image from 'next/image';
 import { getFeaturedPosts, type FeaturedPost, getPosts } from './actions';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -66,6 +66,8 @@ const FeaturedSection = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
+        <CarouselPrevious className="hidden sm:flex" />
+        <CarouselNext className="hidden sm:flex" />
       </Carousel>
     </section>
   )
@@ -101,6 +103,8 @@ const CategorySection = ({ category, posts }: { category: string, posts: Post[] 
             </CarouselItem>
           ))}
         </CarouselContent>
+        <CarouselPrevious className="hidden sm:flex" />
+        <CarouselNext className="hidden sm:flex" />
       </Carousel>
     </section>
   );

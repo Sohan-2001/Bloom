@@ -222,7 +222,7 @@ export function PostCard({ post }: PostCardProps) {
       <Card 
         className={cn(
             "flex flex-col border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full my-2 sm:my-0",
-            isHomePage && "h-48 cursor-pointer"
+            isHomePage && "h-56 cursor-pointer"
         )}
         onClick={handleCardClick}
       >
@@ -258,7 +258,7 @@ export function PostCard({ post }: PostCardProps) {
           )}
         </CardHeader>
         <CardContent className="p-4 pt-0 flex-1">
-          <p className={cn("text-foreground leading-relaxed", isHomePage && "line-clamp-2")}>{post.caption}</p>
+          <p className={cn("text-foreground leading-relaxed", isHomePage && "line-clamp-3")}>{post.caption}</p>
         </CardContent>
         <CardFooter className="p-4 pt-0 flex justify-between items-center">
            <div className="flex space-x-4 text-muted-foreground">

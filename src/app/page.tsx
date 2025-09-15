@@ -7,11 +7,12 @@ import type { Post } from '@/lib/data';
 import Header from '@/components/layout/header';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Heart } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Image from 'next/image';
 import { getFeaturedPosts, type FeaturedPost, getPosts } from './actions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { RazorpayButton } from '@/components/razorpay-button';
 
 const categories = ["All", "Painting", "Photography", "Writing", "Music", "Crafts"];
 
@@ -105,6 +106,21 @@ const CategorySection = ({ category, posts }: { category: string, posts: Post[] 
   );
 };
 
+const DonationSection = () => (
+    <section className="py-8 md:py-12 bg-card border-y">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Heart className="mx-auto h-12 w-12 text-primary mb-4" />
+            <h2 className="text-3xl font-headline tracking-wider mb-2">Support Creativity</h2>
+            <p className="max-w-2xl mx-auto text-muted-foreground mb-6">
+                Your contribution helps us maintain this platform and support creators around the world.
+            </p>
+            <div className="flex justify-center">
+                 <RazorpayButton />
+            </div>
+        </div>
+    </section>
+);
+
 
 export default function Home() {
   const [posts, setPosts] = React.useState<Post[]>([]);
@@ -128,6 +144,9 @@ export default function Home() {
       <main className="flex-1">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <FeaturedSection />
+        </div>
+        <DonationSection />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {isLoading ? (
              [...Array(categories.length)].map((_, i) => (
               <section key={i} className="py-6 md:py-8">

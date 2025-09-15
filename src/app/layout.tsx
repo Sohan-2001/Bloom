@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { Righteous, Inter } from 'next/font/google';
 import './globals.css';
@@ -40,7 +41,7 @@ export default function RootLayout({
       >
         <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
         >

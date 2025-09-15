@@ -31,6 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from './ui/alert-dialog';
+import { usePathname } from 'next/navigation';
 
 interface PostCardProps {
   post: Post;
@@ -127,15 +128,28 @@ const CommentSection = ({ comments, postId, category, profileUserId }: { comment
 export function PostCard({ post }: PostCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const pathname = usePathname();
   
   const [optimisticLikes, setOptimisticLikes] = React.useState(post.likes);
   const [isLiked, setIsLiked] = React.useState(false);
   const [showComments, setShowComments] = React.useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  
+  const isPostPage = pathname.startsWith('/post/');
+  const isHomePage = pathname === '/';
+
+  React.useEffect(() => {
+    if (isPostPage) {
+        setShowComments(true);
+    }
+  }, [isPostPage])
 
 
-  const handleLike = async () => {
+  const handleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
     if (!user) {
       toast({
         title: "Please sign in",
@@ -183,17 +197,36 @@ export function PostCard({ post }: PostCardProps) {
     }
   };
 
+  const toggleComments = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!isPostPage) {
+        setShowComments(!showComments);
+    }
+  }
+
   const truncateCategory = (category: string) => {
     if (category.length > 5) {
       return category.substring(0, 5) + "...";
     }
     return category;
   };
+  
+  const CardContentWrapper = ({children}: {children: React.ReactNode}) => {
+    if (isHomePage) {
+        return <Link href={`/post/${post.id}`} className="block h-full">{children}</Link>
+    }
+    return <>{children}</>;
+  }
 
 
   return (
     <>
-      <Card className="flex flex-col h-full border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full">
+      <Card className={cn(
+          "flex flex-col border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full",
+          isHomePage && "h-48"
+      )}>
+        <CardContentWrapper>
          <CardHeader className="p-4 flex-row items-center justify-between">
           <div className="flex items-center space-x-3">
               <Avatar className="h-10 w-10">
@@ -201,7 +234,7 @@ export function PostCard({ post }: PostCardProps) {
                   <AvatarFallback>{getInitials(post.user.name)}</AvatarFallback>
               </Avatar>
               <div>
-                   <Link href={`/profile/${post.user.id}`} className="font-semibold text-sm hover:underline">
+                   <Link href={`/profile/${post.user.id}`} className="font-semibold text-sm hover:underline" onClick={e => e.stopPropagation()}>
                       {post.user.name}
                   </Link>
                   <p className="text-xs text-muted-foreground">
@@ -212,11 +245,11 @@ export function PostCard({ post }: PostCardProps) {
           {user?.uid === post.user.id && (
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={e => e.stopPropagation()}>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" onClick={e => e.stopPropagation()}>
                   <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-destructive">
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
@@ -226,7 +259,7 @@ export function PostCard({ post }: PostCardProps) {
           )}
         </CardHeader>
         <CardContent className="p-4 pt-0 flex-1">
-          <p className="text-foreground leading-relaxed">{post.caption}</p>
+          <p className={cn("text-foreground leading-relaxed", isHomePage && "line-clamp-2")}>{post.caption}</p>
         </CardContent>
         <CardFooter className="p-4 pt-0 flex justify-between items-center">
            <div className="flex space-x-4 text-muted-foreground">
@@ -234,13 +267,14 @@ export function PostCard({ post }: PostCardProps) {
                   <Heart className={cn("h-4 w-4", isLiked && "text-red-500 fill-red-500")} />
                   <span>{optimisticLikes}</span>
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center space-x-1" onClick={() => setShowComments(!showComments)}>
+              <Button variant="ghost" size="sm" className="flex items-center space-x-1" onClick={toggleComments}>
                   <MessageCircle className="h-4 w-4" />
                   <span>{post.comments.length}</span>
               </Button>
            </div>
            <span className="text-xs text-muted-foreground">{truncateCategory(post.category)}</span>
         </CardFooter>
+        </CardContentWrapper>
         {showComments && (
           <CardContent className="p-4 pt-0">
             <CommentSection comments={post.comments} postId={post.id} category={post.category} profileUserId={post.user.id} />

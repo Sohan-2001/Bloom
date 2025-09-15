@@ -87,6 +87,80 @@ export async function createPost(input: CreatePostInput) {
     }
 }
 
+export async function getPost(postId: string): Promise<Post | null> {
+    try {
+        const postDoc = await getDoc(doc(db, "posts", postId));
+        if (!postDoc.exists()) {
+            return null;
+        }
+
+        const postData = postDoc.data();
+        const userDoc = await getDoc(doc(db, "users", postData.userId));
+
+        let user: User;
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            user = {
+                id: userData.uid,
+                name: userData.displayName,
+                avatar: userData.photoURL,
+                bio: userData.bio,
+            }
+        } else {
+            user = { id: 'unknown', name: 'Unknown User', avatar: '', bio: '' };
+        }
+
+        const createdAtTimestamp = postData.createdAt as Timestamp;
+
+        const commentsWithUsers = await Promise.all(
+          (postData.comments || []).map(async (comment: any) => {
+            const commentUserDoc = await getDoc(doc(db, "users", comment.userId));
+            let commentUser: User;
+            if (commentUserDoc.exists()) {
+              const commentUserData = commentUserDoc.data();
+              commentUser = {
+                id: commentUserData.uid,
+                name: commentUserData.displayName,
+                avatar: commentUserData.photoURL,
+                bio: commentUserData.bio,
+              };
+            } else {
+              commentUser = { id: 'unknown', name: 'Unknown User', avatar: '', bio: '' };
+            }
+            
+            const commentCreatedAtTimestamp = comment.createdAt as Timestamp;
+
+            return {
+              id: comment.id,
+              user: commentUser,
+              text: comment.text,
+              createdAt: commentCreatedAtTimestamp ? {
+                seconds: commentCreatedAtTimestamp.seconds,
+                nanoseconds: commentCreatedAtTimestamp.nanoseconds,
+              } : null,
+            };
+          })
+        );
+        
+        return {
+            id: postDoc.id,
+            user: user,
+            caption: postData.caption,
+            category: postData.category,
+            likes: postData.likes,
+            comments: commentsWithUsers,
+            createdAt: createdAtTimestamp ? {
+                seconds: createdAtTimestamp.seconds,
+                nanoseconds: createdAtTimestamp.nanoseconds,
+            } : null,
+        };
+
+    } catch (error) {
+        console.error("Error fetching post:", error);
+        return null;
+    }
+}
+
 
 export async function getPosts(): Promise<Post[]> {
     try {
@@ -172,6 +246,7 @@ export async function likePost(postId: string) {
             likes: increment(1)
         });
         revalidatePath('/');
+        revalidatePath(`/post/${postId}`);
         return { success: true };
     } catch (error) {
         console.error("Error liking post:", error);
@@ -199,6 +274,7 @@ export async function addComment(postId: string, userId: string, commentText: st
         });
         
         revalidatePath('/');
+        revalidatePath(`/post/${postId}`);
         if (category) {
             revalidatePath(`/category/${category.toLowerCase()}`);
         }

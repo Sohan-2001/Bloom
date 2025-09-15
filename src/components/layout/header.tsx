@@ -1,10 +1,9 @@
-
 "use client";
 
 import { LogOut, Menu, Plus, Search, User as UserIcon, Moon, Sun, Monitor, MessageSquareText } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import {
@@ -186,6 +185,10 @@ export default function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
+               <SheetHeader>
+                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                <SheetDescription className="sr-only">A menu for navigating the site on mobile.</SheetDescription>
+              </SheetHeader>
                <Link href="/" className="mr-6 flex items-center space-x-2">
                 <span className="font-headline text-3xl font-bold text-primary tracking-wider">
                   BLOOM

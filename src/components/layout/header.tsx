@@ -1,6 +1,7 @@
+
 "use client";
 
-import { LogOut, Menu, Plus, Search, User as UserIcon, Moon, Sun, Monitor, MessageSquareText } from "lucide-react";
+import { LogOut, Menu, Plus, User as UserIcon, Moon, Sun, Monitor, MessageSquareText } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
@@ -89,14 +90,6 @@ export default function Header() {
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hover:bg-primary/90"
-          >
-            <Search className="h-5 w-5" />
-          </Button>
-
           <div className="hidden md:flex items-center space-x-2">
             <Button variant="ghost" size="sm" className="hover:bg-primary/90" onClick={() => setIsFeedbackDialogOpen(true)}>
                 <MessageSquareText className="mr-2 h-4 w-4" />

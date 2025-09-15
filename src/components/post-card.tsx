@@ -137,7 +137,7 @@ export function PostCard({ post }: PostCardProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
   
-  const isPostPage = pathname.includes('/post/');
+  const isPostPage = pathname.startsWith('/post/');
   const isHomePage = pathname === '/';
 
   React.useEffect(() => {
@@ -206,18 +206,11 @@ export function PostCard({ post }: PostCardProps) {
     }
   }
 
-  const truncateCategory = (category: string) => {
-    if (category.length > 5) {
-      return category.substring(0, 5) + "...";
-    }
-    return category;
-  };
-  
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // a bit of a hack to prevent navigation when clicking on a link, button or dropdown
     if (isHomePage) {
         const target = e.target as HTMLElement;
-        if (target.closest('a, button')) {
+        if (target.closest('a, button, [role="menu"]')) {
             return;
         }
         router.push(`/post/${post.id}`);
@@ -278,7 +271,6 @@ export function PostCard({ post }: PostCardProps) {
                   <span>{post.comments.length}</span>
               </Button>
            </div>
-           <span className="text-xs text-muted-foreground">{truncateCategory(post.category)}</span>
         </CardFooter>
         {showComments && (
           <CardContent className="p-4 pt-0">

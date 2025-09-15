@@ -25,17 +25,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
-
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
-  password: z.string().min(1, { message: "Password is required." }),
 });
 
-export function SignInForm() {
+export function ForgotPasswordForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -44,19 +42,22 @@ export function SignInForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      router.push('/');
-    } catch (error: any) {
-      console.error("Authentication error:", error);
+      await sendPasswordResetEmail(auth, values.email);
       toast({
-        title: "Sign-in failed",
+        title: "Password reset email sent",
+        description: "Please check your inbox for instructions to reset your password.",
+      });
+      router.push('/sign-in');
+    } catch (error: any) {
+      console.error("Password reset error:", error);
+      toast({
+        title: "Error sending email",
         description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
@@ -68,7 +69,7 @@ export function SignInForm() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
+        <CardTitle>Forgot Password</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -86,37 +87,18 @@ export function SignInForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="********" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <div className="flex items-center justify-between">
-                <div />
-                <Button variant="link" asChild className="px-0">
-                    <Link href="/forgot-password">Forgot password?</Link>
-                </Button>
-            </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+              Send Reset Email
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="flex flex-col items-center space-y-2">
          <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Remembered your password?{" "}
             <Button variant="link" asChild className="px-0">
-                <Link href="/sign-up">Sign up</Link>
+                <Link href="/sign-in">Sign in</Link>
             </Button>
         </p>
       </CardFooter>

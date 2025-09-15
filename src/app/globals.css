@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
+    --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
-    --card: 0 0% 98%;
+    --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 98%;
+    --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 92% 55%;
+    --primary: 340 82% 52%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 92% 55%;
+    --ring: 340 82% 52%;
     --radius: 0.5rem;
   }
 
@@ -33,7 +33,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 92% 55%; /* Netflix red */
+    --primary: 340 82% 52%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 98%;
@@ -45,7 +45,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 15%;
     --input: 0 0% 15%;
-    --ring: 0 92% 55%;
+    --ring: 340 82% 52%;
   }
 }
 

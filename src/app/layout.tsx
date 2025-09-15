@@ -3,6 +3,7 @@ import { Righteous, Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const fontSans = Inter({
   subsets: ['latin'],
@@ -26,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
       </head>
       <body
@@ -36,8 +37,15 @@ export default function RootLayout({
           fontHeading.variable
         )}
       >
-        {children}
-        <Toaster />
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
+            {children}
+            <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

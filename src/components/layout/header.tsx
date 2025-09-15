@@ -1,7 +1,7 @@
 
 "use client";
 
-import { LogOut, Menu, Plus, Search, User as UserIcon } from "lucide-react";
+import { LogOut, Menu, Plus, Search, User as UserIcon, Moon, Sun, Monitor } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
@@ -14,12 +14,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import * as React from 'react';
 import { UploadPostDialog } from '../upload-post-dialog';
+import { useTheme } from "next-themes";
 
 const categories = [
   "All",
@@ -34,6 +39,7 @@ export default function Header() {
   const { user } = useAuth();
   const router = useRouter();
   const [isUploadDialogOpen, setIsUploadDialogOpen] = React.useState(false);
+  const { setTheme } = useTheme();
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -82,10 +88,12 @@ export default function Header() {
 
           {user ? (
             <>
-              <Button variant="outline" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Post
-              </Button>
+              <div className="hidden md:flex">
+                <Button variant="outline" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Post
+                </Button>
+              </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -113,6 +121,29 @@ export default function Header() {
                       <span>Profile</span>
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 mr-2" />
+                        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 mr-2" />
+                        <span>Theme</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem onClick={() => setTheme("light")}>
+                                <Sun className="mr-2 h-4 w-4" />
+                                <span>Light</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme("dark")}>
+                                <Moon className="mr-2 h-4 w-4" />
+                                <span>Dark</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setTheme("system")}>
+                                <Monitor className="mr-2 h-4 w-4" />
+                                <span>System</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
@@ -146,7 +177,13 @@ export default function Header() {
                   BLOOM
                 </span>
               </Link>
-              <nav className="mt-8 flex flex-col space-y-4 text-lg font-medium">
+              <div className="mt-4">
+                 <Button className="w-full" variant="outline" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Post
+                </Button>
+              </div>
+              <nav className="mt-4 flex flex-col space-y-4 text-lg font-medium">
                 {categories.map((category) => (
                   <Link
                     key={category}

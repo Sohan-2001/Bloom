@@ -11,7 +11,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --primary: 25 95% 53%; /* Orange */
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 145 63% 42%; /* Green */
     --secondary-foreground: 0 0% 98%;
     --muted: 240 5% 96.1%;
@@ -34,7 +34,7 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
     --primary: 25 95% 53%; /* Orange */
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 145 63% 42%; /* Green */
     --secondary-foreground: 0 0% 98%;
     --muted: 240 4% 16%;

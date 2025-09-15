@@ -25,12 +25,13 @@ const getInitials = (name?: string | null) => {
   const formatDate = (timestamp: Post['createdAt']) => {
     if (!timestamp) return 'Just now';
     const date = new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
-    return date.toLocaleDateString();
+    // format as "Month Day, Year"
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   }
 
 export function PostCard({ post }: PostCardProps) {
   return (
-    <Card className="flex flex-col h-full border-none shadow-md hover:shadow-xl transition-shadow duration-300">
+    <Card className="flex flex-col h-full border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full">
        <CardHeader className="p-4">
         <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10">

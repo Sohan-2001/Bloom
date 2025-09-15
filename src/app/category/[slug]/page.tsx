@@ -41,11 +41,11 @@ export default function CategoryPage() {
         <div className="mx-auto max-w-7xl">
           <h1 className="text-4xl font-headline tracking-wider mb-8">{category}</h1>
            {isLoading ? (
-             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                {[...Array(10)].map((_, i) => <Skeleton key={i} className="aspect-[3/4] w-full" />)}
+             <div className="space-y-6">
+                {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}
             </div>
            ) : posts.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="flex flex-col gap-8">
                 {posts.map((post) => (
                 <PostCard key={post.id} post={post} />
                 ))}

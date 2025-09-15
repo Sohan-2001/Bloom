@@ -5,7 +5,7 @@ import { suggestProjectPrompts } from "@/ai/flows/ai-suggested-project-prompts";
 import type { SuggestProjectPromptsOutput } from "@/ai/flows/ai-suggested-project-prompts";
 import type { Post, User } from "@/lib/data";
 import { db, storage } from "@/lib/firebase";
-import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, getDoc, doc, Timestamp, updateDoc, increment } from "firebase/firestore";
+import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, getDoc, doc, Timestamp, updateDoc, increment, arrayUnion } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { revalidatePath } from "next/cache";
 
@@ -113,13 +113,45 @@ export async function getPosts(): Promise<Post[]> {
             
             const createdAtTimestamp = postData.createdAt as Timestamp;
 
+            // Fetch user data for each comment
+            const commentsWithUsers = await Promise.all(
+              (postData.comments || []).map(async (comment: any) => {
+                const commentUserDoc = await getDoc(doc(db, "users", comment.userId));
+                let commentUser: User;
+                if (commentUserDoc.exists()) {
+                  const commentUserData = commentUserDoc.data();
+                  commentUser = {
+                    id: commentUserData.uid,
+                    name: commentUserData.displayName,
+                    avatar: commentUserData.photoURL,
+                    bio: commentUserData.bio,
+                  };
+                } else {
+                  commentUser = { id: 'unknown', name: 'Unknown User', avatar: '', bio: '' };
+                }
+                
+                const commentCreatedAtTimestamp = comment.createdAt as Timestamp;
+
+                return {
+                  id: comment.id,
+                  user: commentUser,
+                  text: comment.text,
+                  createdAt: commentCreatedAtTimestamp ? {
+                    seconds: commentCreatedAtTimestamp.seconds,
+                    nanoseconds: commentCreatedAtTimestamp.nanoseconds,
+                } : null,
+                };
+              })
+            );
+
+
             return {
                 id: p.id,
                 user: user,
                 caption: postData.caption,
                 category: postData.category,
                 likes: postData.likes,
-                comments: postData.comments,
+                comments: commentsWithUsers,
                 createdAt: createdAtTimestamp ? {
                     seconds: createdAtTimestamp.seconds,
                     nanoseconds: createdAtTimestamp.nanoseconds,
@@ -147,5 +179,35 @@ export async function likePost(postId: string) {
     } catch (error) {
         console.error("Error liking post:", error);
         return { success: false, error: "Failed to like post." };
+    }
+}
+
+export async function addComment(postId: string, userId: string, commentText: string) {
+    if (!commentText.trim()) {
+        return { success: false, error: "Comment cannot be empty." };
+    }
+    
+    try {
+        const postRef = doc(db, "posts", postId);
+
+        const newComment = {
+            id: doc(collection(db, "dummy")).id, // Generate a unique ID
+            userId: userId,
+            text: commentText,
+            createdAt: serverTimestamp(),
+        };
+
+        await updateDoc(postRef, {
+            comments: arrayUnion(newComment)
+        });
+        
+        revalidatePath('/');
+        revalidatePath('/category/.*');
+        revalidatePath('/profile/.*');
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        return { success: false, error: "Failed to add comment." };
     }
 }

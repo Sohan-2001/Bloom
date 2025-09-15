@@ -10,6 +10,10 @@ export type Comment = {
   id: string;
   user: User;
   text: string;
+  createdAt: {
+    seconds: number;
+    nanoseconds: number;
+  } | null;
 };
 
 export type Post = {

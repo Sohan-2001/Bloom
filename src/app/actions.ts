@@ -5,7 +5,7 @@ import { suggestProjectPrompts } from "@/ai/flows/ai-suggested-project-prompts";
 import type { SuggestProjectPromptsOutput } from "@/ai/flows/ai-suggested-project-prompts";
 import type { Post, User } from "@/lib/data";
 import { db, storage } from "@/lib/firebase";
-import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, getDoc, doc, Timestamp, updateDoc, increment, arrayUnion } from "firebase/firestore";
+import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, getDoc, doc, Timestamp, updateDoc, increment, arrayUnion, deleteDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { revalidatePath } from "next/cache";
 
@@ -210,6 +210,22 @@ export async function addComment(postId: string, userId: string, commentText: st
     } catch (error) {
         console.error("Error adding comment:", error);
         return { success: false, error: "Failed to add comment." };
+    }
+}
+
+export async function deletePost(postId: string, category: string, userId: string) {
+    try {
+        const postRef = doc(db, "posts", postId);
+        await deleteDoc(postRef);
+
+        revalidatePath('/');
+        revalidatePath(`/category/${category.toLowerCase()}`);
+        revalidatePath(`/profile/${userId}`);
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting post:", error);
+        return { success: false, error: "Failed to delete post." };
     }
 }
 

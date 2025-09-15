@@ -3,18 +3,34 @@
 
 import * as React from 'react';
 import type { Post, Comment, User } from '@/lib/data';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import { MessageCircle, Heart, Send } from 'lucide-react';
+import { MessageCircle, Heart, Send, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Timestamp } from 'firebase/firestore';
-import { addComment, likePost } from '@/app/actions';
+import { addComment, likePost, deletePost } from '@/app/actions';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Input } from './ui/input';
 import { Separator } from './ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from './ui/alert-dialog';
 
 interface PostCardProps {
   post: Post;
@@ -115,6 +131,8 @@ export function PostCard({ post }: PostCardProps) {
   const [optimisticLikes, setOptimisticLikes] = React.useState(post.likes);
   const [isLiked, setIsLiked] = React.useState(false);
   const [showComments, setShowComments] = React.useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
 
   const handleLike = async () => {
@@ -145,6 +163,26 @@ export function PostCard({ post }: PostCardProps) {
     }
   };
 
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    const result = await deletePost(post.id, post.category, post.user.id);
+    setIsDeleting(false);
+
+    if (result.success) {
+      toast({
+        title: "Post deleted",
+        description: "Your post has been successfully deleted.",
+      });
+      setIsDeleteDialogOpen(false);
+    } else {
+      toast({
+        title: "Error",
+        description: result.error || "Could not delete the post.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const truncateCategory = (category: string) => {
     if (category.length > 5) {
       return category.substring(0, 5) + "...";
@@ -154,44 +192,77 @@ export function PostCard({ post }: PostCardProps) {
 
 
   return (
-    <Card className="flex flex-col h-full border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full">
-       <CardHeader className="p-4">
-        <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10">
-                <AvatarImage src={post.user.avatar} alt={post.user.name} />
-                <AvatarFallback>{getInitials(post.user.name)}</AvatarFallback>
-            </Avatar>
-            <div>
-                 <Link href={`/profile/${post.user.id}`} className="font-semibold text-sm hover:underline">
-                    {post.user.name}
-                </Link>
-                <p className="text-xs text-muted-foreground">
-                    {formatDate(post.createdAt)}
-                </p>
-            </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 pt-0 flex-1">
-        <p className="text-foreground leading-relaxed">{post.caption}</p>
-      </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-         <div className="flex space-x-4 text-muted-foreground">
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1" onClick={handleLike}>
-                <Heart className={cn("h-4 w-4", isLiked && "text-red-500 fill-red-500")} />
-                <span>{optimisticLikes}</span>
-            </Button>
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1" onClick={() => setShowComments(!showComments)}>
-                <MessageCircle className="h-4 w-4" />
-                <span>{post.comments.length}</span>
-            </Button>
-         </div>
-         <span className="text-xs text-muted-foreground">{truncateCategory(post.category)}</span>
-      </CardFooter>
-      {showComments && (
-        <CardContent className="p-4 pt-0">
-          <CommentSection comments={post.comments} postId={post.id} category={post.category} profileUserId={post.user.id} />
+    <>
+      <Card className="flex flex-col h-full border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full">
+         <CardHeader className="p-4 flex-row items-center justify-between">
+          <div className="flex items-center space-x-3">
+              <Avatar className="h-10 w-10">
+                  <AvatarImage src={post.user.avatar} alt={post.user.name} />
+                  <AvatarFallback>{getInitials(post.user.name)}</AvatarFallback>
+              </Avatar>
+              <div>
+                   <Link href={`/profile/${post.user.id}`} className="font-semibold text-sm hover:underline">
+                      {post.user.name}
+                  </Link>
+                  <p className="text-xs text-muted-foreground">
+                      {formatDate(post.createdAt)}
+                  </p>
+              </div>
+          </div>
+          {user?.uid === post.user.id && (
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+          )}
+        </CardHeader>
+        <CardContent className="p-4 pt-0 flex-1">
+          <p className="text-foreground leading-relaxed">{post.caption}</p>
         </CardContent>
-      )}
-    </Card>
+        <CardFooter className="p-4 pt-0 flex justify-between items-center">
+           <div className="flex space-x-4 text-muted-foreground">
+              <Button variant="ghost" size="sm" className="flex items-center space-x-1" onClick={handleLike}>
+                  <Heart className={cn("h-4 w-4", isLiked && "text-red-500 fill-red-500")} />
+                  <span>{optimisticLikes}</span>
+              </Button>
+              <Button variant="ghost" size="sm" className="flex items-center space-x-1" onClick={() => setShowComments(!showComments)}>
+                  <MessageCircle className="h-4 w-4" />
+                  <span>{post.comments.length}</span>
+              </Button>
+           </div>
+           <span className="text-xs text-muted-foreground">{truncateCategory(post.category)}</span>
+        </CardFooter>
+        {showComments && (
+          <CardContent className="p-4 pt-0">
+            <CommentSection comments={post.comments} postId={post.id} category={post.category} profileUserId={post.user.id} />
+          </CardContent>
+        )}
+      </Card>
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your post.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

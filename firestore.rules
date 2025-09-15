@@ -1,0 +1,51 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users:
+    // - Anyone can read user profiles.
+    // - Authenticated users can create their own user document.
+    // - Authenticated users can only update their own profile.
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false; // Disallow deleting user profiles
+    }
+
+    // Posts:
+    // - Anyone can read posts.
+    // - Authenticated users can create posts, and the post's userId must match their own.
+    // - Authenticated users can update likes.
+    // - Authenticated users can add comments.
+    // - Only the post owner can delete their post.
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null && (
+        // Allow liking
+        (request.resource.data.likes == resource.data.likes + 1) ||
+        // Allow adding comments
+        (request.resource.data.comments.size() == resource.data.comments.size() + 1)
+      );
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+
+    // Featured Posts:
+    // - Anyone can read featured posts.
+    // - Only admins should be able to write (currently restricted).
+    match /featured/{docId} {
+      allow read: if true;
+      allow write: if false; // Restricted for now. Implement admin roles for write access.
+    }
+    
+    // Feedbacks:
+    // - Anyone can submit feedback.
+    // - Reading feedback is restricted (presumably for admins).
+    match /feedbacks/{feedbackId} {
+        allow create: if true;
+        allow read, update, delete: if false; // Restricted for now.
+    }
+  }
+}

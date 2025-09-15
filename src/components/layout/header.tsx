@@ -89,18 +89,19 @@ export default function Header() {
             <Search className="h-5 w-5" />
           </Button>
 
+          <div className="hidden md:flex items-center space-x-2">
+            <Button variant="ghost" size="sm" onClick={() => setIsFeedbackDialogOpen(true)}>
+                <MessageSquareText className="mr-2 h-4 w-4" />
+                Feedback
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Post
+            </Button>
+          </div>
+
           {user ? (
             <>
-              <div className="hidden md:flex items-center space-x-2">
-                <Button variant="ghost" size="sm" onClick={() => setIsFeedbackDialogOpen(true)}>
-                    <MessageSquareText className="mr-2 h-4 w-4" />
-                    Feedback
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Post
-                </Button>
-              </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -160,18 +161,12 @@ export default function Header() {
               </DropdownMenu>
             </>
           ) : (
-            <>
-                <Button variant="ghost" size="sm" onClick={() => setIsFeedbackDialogOpen(true)}>
-                    <MessageSquareText className="mr-2 h-4 w-4" />
-                    Feedback
-                </Button>
-                <Button
-                variant="ghost"
-                asChild
-                >
-                <Link href="/sign-in">Sign In</Link>
-                </Button>
-            </>
+            <Button
+              variant="ghost"
+              asChild
+            >
+              <Link href="/sign-in">Sign In</Link>
+            </Button>
           )}
 
           <Sheet>

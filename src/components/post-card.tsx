@@ -145,6 +145,13 @@ export function PostCard({ post }: PostCardProps) {
     }
   };
 
+  const truncateCategory = (category: string) => {
+    if (category.length > 5) {
+      return category.substring(0, 5) + "...";
+    }
+    return category;
+  };
+
 
   return (
     <Card className="flex flex-col h-full border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full">
@@ -178,7 +185,7 @@ export function PostCard({ post }: PostCardProps) {
                 <span>{post.comments.length}</span>
             </Button>
          </div>
-         <span className="text-xs text-muted-foreground">{post.category}</span>
+         <span className="text-xs text-muted-foreground">{truncateCategory(post.category)}</span>
       </CardFooter>
       {showComments && (
         <CardContent className="p-4 pt-0">

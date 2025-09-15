@@ -68,7 +68,11 @@ export default function Header() {
               BLOOM
             </span>
           </Link>
-          <Button style={{ backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }} size="sm" onClick={() => setIsUploadDialogOpen(true)}>
+          <Button 
+            size="sm" 
+            onClick={() => setIsUploadDialogOpen(true)}
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 ring-1 ring-yellow-400"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Post
           </Button>

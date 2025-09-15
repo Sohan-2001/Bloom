@@ -5,7 +5,7 @@ import { suggestProjectPrompts } from "@/ai/flows/ai-suggested-project-prompts";
 import type { SuggestProjectPromptsOutput } from "@/ai/flows/ai-suggested-project-prompts";
 import type { Post, User } from "@/lib/data";
 import { db, storage } from "@/lib/firebase";
-import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, getDoc, doc, Timestamp } from "firebase/firestore";
+import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, getDoc, doc, Timestamp, updateDoc, increment } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { revalidatePath } from "next/cache";
 
@@ -131,5 +131,21 @@ export async function getPosts(): Promise<Post[]> {
     } catch (error) {
         console.error("Error fetching posts:", error);
         return [];
+    }
+}
+
+export async function likePost(postId: string) {
+    try {
+        const postRef = doc(db, "posts", postId);
+        await updateDoc(postRef, {
+            likes: increment(1)
+        });
+        revalidatePath('/');
+        revalidatePath('/category/.*');
+        revalidatePath('/profile/.*');
+        return { success: true };
+    } catch (error) {
+        console.error("Error liking post:", error);
+        return { success: false, error: "Failed to like post." };
     }
 }

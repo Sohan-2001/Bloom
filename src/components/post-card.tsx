@@ -9,6 +9,11 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { MessageCircle, Heart } from 'lucide-react';
 import { Timestamp } from 'firebase/firestore';
+import { likePost } from '@/app/actions';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+
 
 interface PostCardProps {
   post: Post;
@@ -30,6 +35,42 @@ const getInitials = (name?: string | null) => {
   }
 
 export function PostCard({ post }: PostCardProps) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  
+  const [optimisticLikes, setOptimisticLikes] = React.useState(post.likes);
+  const [isLiked, setIsLiked] = React.useState(false);
+
+
+  const handleLike = async () => {
+    if (!user) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to like a post.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if(isLiked) return; // Prevent multiple likes
+
+    setIsLiked(true);
+    setOptimisticLikes(prev => prev + 1);
+
+    const result = await likePost(post.id);
+
+    if (!result.success) {
+      setOptimisticLikes(prev => prev - 1);
+      setIsLiked(false);
+      toast({
+        title: "Error",
+        description: "Could not like the post.",
+        variant: "destructive",
+      });
+    }
+  };
+
+
   return (
     <Card className="flex flex-col h-full border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full">
        <CardHeader className="p-4">
@@ -53,9 +94,9 @@ export function PostCard({ post }: PostCardProps) {
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between items-center">
          <div className="flex space-x-4 text-muted-foreground">
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1">
-                <Heart className="h-4 w-4" />
-                <span>{post.likes}</span>
+            <Button variant="ghost" size="sm" className="flex items-center space-x-1" onClick={handleLike}>
+                <Heart className={cn("h-4 w-4", isLiked && "text-red-500 fill-red-500")} />
+                <span>{optimisticLikes}</span>
             </Button>
             <Button variant="ghost" size="sm" className="flex items-center space-x-1">
                 <MessageCircle className="h-4 w-4" />

@@ -60,15 +60,15 @@ export default function Header() {
     <>
     <UploadPostDialog open={isUploadDialogOpen} setOpen={setIsUploadDialogOpen} />
     <FeedbackDialog open={isFeedbackDialogOpen} setOpen={setIsFeedbackDialogOpen} />
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-primary text-primary-foreground">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-4 flex items-center space-x-2">
-            <span className="font-headline text-3xl font-bold text-primary tracking-wider">
+            <span className="font-headline text-3xl font-bold tracking-wider">
               BLOOM
             </span>
           </Link>
-          <Button variant="outline" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
+          <Button variant="secondary" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Post
           </Button>
@@ -77,7 +77,7 @@ export default function Header() {
               <Link
                 key={category}
                 href={`/category/${category.toLowerCase()}`}
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
+                className="transition-colors hover:text-primary-foreground/80 text-primary-foreground/60"
               >
                 {category}
               </Link>
@@ -89,12 +89,13 @@ export default function Header() {
           <Button
             variant="ghost"
             size="icon"
+            className="hover:bg-primary/90"
           >
             <Search className="h-5 w-5" />
           </Button>
 
           <div className="hidden md:flex items-center space-x-2">
-            <Button variant="ghost" size="sm" onClick={() => setIsFeedbackDialogOpen(true)}>
+            <Button variant="ghost" size="sm" className="hover:bg-primary/90" onClick={() => setIsFeedbackDialogOpen(true)}>
                 <MessageSquareText className="mr-2 h-4 w-4" />
                 Feedback
             </Button>
@@ -104,7 +105,7 @@ export default function Header() {
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full hover:bg-primary/90">
                     <Avatar className="h-9 w-9">
                       <AvatarImage src={user.photoURL ?? ""} alt={user.displayName ?? ""} />
                       <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
@@ -164,6 +165,7 @@ export default function Header() {
             <Button
               variant="ghost"
               asChild
+              className="hover:bg-primary/90"
             >
               <Link href="/sign-in">Sign In</Link>
             </Button>
@@ -174,7 +176,7 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
+                className="md:hidden hover:bg-primary/90"
               >
                 <Menu className="h-6 w-6" />
               </Button>

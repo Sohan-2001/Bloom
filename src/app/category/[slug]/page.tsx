@@ -39,7 +39,7 @@ export default function CategoryPage() {
       <Header />
       <main className="flex-1 p-4 sm:p-6 md:p-8 pt-20 sm:pt-22 md:pt-24">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl font-headline tracking-wider mb-8">{category}</h1>
+          <h1 className="text-3xl sm:text-4xl font-headline tracking-wider mb-8">{category}</h1>
            {isLoading ? (
              <div className="space-y-6">
                 {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-48 w-full" />)}

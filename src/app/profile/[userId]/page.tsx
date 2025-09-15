@@ -115,7 +115,7 @@ export default function ProfilePage() {
                       <AvatarFallback className="text-4xl">{getInitials(user.name)}</AvatarFallback>
                     </Avatar>
                   <div className="text-center md:text-left">
-                    <h1 className="text-4xl font-headline tracking-wider">{user.name}</h1>
+                    <h1 className="text-3xl sm:text-4xl font-headline tracking-wider">{user.name}</h1>
                     <p className="mt-2 text-lg text-muted-foreground max-w-xl">{user.bio}</p>
                   </div>
                 </div>

@@ -8,7 +8,7 @@ export default function SignUpPage() {
       <div className="w-full max-w-md p-8">
         <div className="text-center mb-8">
           <Link href="/" className="flex justify-center items-center space-x-2">
-            <span className="font-headline text-5xl font-bold text-primary tracking-wider">
+            <span className="font-headline text-4xl sm:text-5xl font-bold text-primary tracking-wider">
               BLOOM
             </span>
           </Link>

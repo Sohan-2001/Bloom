@@ -221,7 +221,7 @@ export function PostCard({ post }: PostCardProps) {
     <>
       <Card 
         className={cn(
-            "flex flex-col border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full",
+            "flex flex-col border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full my-2 sm:my-0",
             isHomePage && "h-48 cursor-pointer"
         )}
         onClick={handleCardClick}

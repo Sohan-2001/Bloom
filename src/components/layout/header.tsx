@@ -63,20 +63,20 @@ export default function Header() {
     <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-primary/80 text-secondary backdrop-blur-sm">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
-          <Link href="/" className="mr-4 flex items-center space-x-2">
-            <span className="font-headline text-3xl font-bold tracking-wider">
+          <Link href="/" className="mr-2 flex items-center space-x-2 sm:mr-4">
+            <span className="font-headline text-2xl font-bold tracking-wider sm:text-3xl">
               BLOOM
             </span>
           </Link>
           <Button 
             size="sm" 
             onClick={() => setIsUploadDialogOpen(true)}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/90 ring-1 ring-yellow-400"
+            className="hidden sm:inline-flex bg-secondary text-secondary-foreground hover:bg-secondary/90 ring-1 ring-yellow-400"
           >
             <Plus className="mr-2 h-4 w-4" />
             Post
           </Button>
-          <nav className="hidden items-center space-x-6 text-sm font-medium md:flex ml-6">
+          <nav className="hidden items-center space-x-2 text-sm font-medium md:flex ml-4 lg:space-x-6 lg:ml-6">
             {categories.map((category) => (
               <Link
                 key={category}
@@ -161,7 +161,7 @@ export default function Header() {
             <Button
               variant="ghost"
               asChild
-              className="hover:bg-primary/90"
+              className="hover:bg-primary/90 text-sm sm:text-base"
             >
               <Link href="/sign-in">Sign In</Link>
             </Button>
@@ -188,7 +188,27 @@ export default function Header() {
                 </span>
               </Link>
               <div className="mt-4 flex flex-col space-y-2">
-                <Button className="w-full" variant="ghost" size="sm" onClick={() => setIsFeedbackDialogOpen(true)}>
+                 <Button 
+                    size="sm" 
+                    onClick={() => {
+                        const sheetClose = document.querySelector('[data-radix-dialog-close]');
+                        if (sheetClose instanceof HTMLElement) {
+                            sheetClose.click();
+                        }
+                        setIsUploadDialogOpen(true);
+                    }}
+                    className="sm:hidden bg-secondary text-secondary-foreground hover:bg-secondary/90 ring-1 ring-yellow-400"
+                >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Post
+                </Button>
+                <Button className="w-full justify-start" variant="ghost" size="sm" onClick={() => {
+                     const sheetClose = document.querySelector('[data-radix-dialog-close]');
+                        if (sheetClose instanceof HTMLElement) {
+                            sheetClose.click();
+                        }
+                    setIsFeedbackDialogOpen(true)
+                }}>
                     <MessageSquareText className="mr-2 h-4 w-4" />
                     Feedback
                 </Button>

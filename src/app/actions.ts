@@ -3,8 +3,10 @@
 
 import { suggestProjectPrompts } from "@/ai/flows/ai-suggested-project-prompts";
 import type { SuggestProjectPromptsOutput } from "@/ai/flows/ai-suggested-project-prompts";
-import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { db, storage } from "@/lib/firebase";
+import { collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { revalidatePath } from "next/cache";
 
 export async function getAiSuggestions(): Promise<SuggestProjectPromptsOutput> {
   // In a real application, you would fetch the current user's actual data.
@@ -50,4 +52,43 @@ export async function getFeaturedPosts(): Promise<FeaturedPost[]> {
     console.error("Error fetching featured posts:", error);
     return [];
   }
+}
+
+export type CreatePostInput = {
+    userId: string;
+    caption: string;
+    category: string;
+    imageDataUri: string;
+};
+
+export async function createPost(input: CreatePostInput) {
+    const { userId, caption, category, imageDataUri } = input;
+
+    try {
+        // 1. Upload image to Firebase Storage
+        const imageRef = ref(storage, `posts/${userId}/${Date.now()}`);
+        const uploadResult = await uploadString(imageRef, imageDataUri, 'data_url');
+        const imageUrl = await getDownloadURL(uploadResult.ref);
+
+        // 2. Create post document in Firestore
+        await addDoc(collection(db, "posts"), {
+            userId: userId,
+            caption: caption,
+            category: category,
+            image: imageUrl,
+            createdAt: serverTimestamp(),
+            likes: 0,
+            comments: [],
+        });
+
+        // 3. Revalidate path to show new post
+        revalidatePath("/");
+        revalidatePath(`/category/${category.toLowerCase()}`);
+        revalidatePath(`/profile/${userId}`);
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error creating post:", error);
+        return { success: false, error: "Failed to create post." };
+    }
 }

@@ -13,6 +13,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import Image from 'next/image';
 import { getFeaturedPosts, type FeaturedPost } from './actions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { UploadPostDialog } from '@/components/upload-post-dialog';
 
 const categories = ["All", "Painting", "Photography", "Writing", "Music", "Crafts"];
 
@@ -73,16 +74,18 @@ const FeaturedSection = () => {
 
 
 const CategorySection = ({ category, posts }: { category: string, posts: Post[] }) => {
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = React.useState(false);
   const filteredPosts = category === "All" ? posts : posts.filter(post => post.category === category);
   
   if(filteredPosts.length === 0) return null;
 
   return (
     <section className="py-6 md:py-8">
+       <UploadPostDialog open={isUploadDialogOpen} setOpen={setIsUploadDialogOpen} />
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-headline tracking-wider">{category === "All" ? "Popular" : category}</h2>
         <div className="flex items-center space-x-4">
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => setIsUploadDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Upload a post
             </Button>

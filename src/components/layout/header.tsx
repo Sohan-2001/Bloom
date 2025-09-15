@@ -64,10 +64,18 @@ export default function Header() {
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-2 flex items-center space-x-2 sm:mr-4">
-            <span className="font-headline text-2xl font-bold tracking-wider sm:text-3xl">
+            <span className="hidden sm:inline font-headline text-2xl font-bold tracking-wider sm:text-3xl">
               BLOOM
             </span>
           </Link>
+          <Button 
+            size="sm" 
+            onClick={() => setIsUploadDialogOpen(true)}
+            className="sm:hidden bg-secondary text-secondary-foreground hover:bg-secondary/90 ring-1 ring-yellow-400"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Post
+          </Button>
           <Button 
             size="sm" 
             onClick={() => setIsUploadDialogOpen(true)}
@@ -179,8 +187,10 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="left">
                <SheetHeader>
-                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                <SheetDescription className="sr-only">A menu for navigating the site on mobile.</SheetDescription>
+                <SheetTitle>Menu</SheetTitle>
+                <SheetDescription>
+                  Navigate through the application.
+                </SheetDescription>
               </SheetHeader>
                <Link href="/" className="mr-6 flex items-center space-x-2">
                 <span className="font-headline text-3xl font-bold text-primary tracking-wider">

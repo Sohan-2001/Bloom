@@ -1,7 +1,7 @@
 
 "use client";
 
-import { LogOut, Menu, Plus, Search, User as UserIcon, Moon, Sun, Monitor } from "lucide-react";
+import { LogOut, Menu, Plus, Search, User as UserIcon, Moon, Sun, Monitor, MessageSquareText } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/use-auth";
 import * as React from 'react';
 import { UploadPostDialog } from '../upload-post-dialog';
 import { useTheme } from "next-themes";
+import { FeedbackDialog } from "../feedback-dialog";
 
 const categories = [
   "All",
@@ -39,6 +40,7 @@ export default function Header() {
   const { user } = useAuth();
   const router = useRouter();
   const [isUploadDialogOpen, setIsUploadDialogOpen] = React.useState(false);
+  const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = React.useState(false);
   const { setTheme } = useTheme();
 
   const handleSignOut = async () => {
@@ -57,6 +59,7 @@ export default function Header() {
   return (
     <>
     <UploadPostDialog open={isUploadDialogOpen} setOpen={setIsUploadDialogOpen} />
+    <FeedbackDialog open={isFeedbackDialogOpen} setOpen={setIsFeedbackDialogOpen} />
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="mr-8 flex items-center">
@@ -78,7 +81,7 @@ export default function Header() {
           </nav>
         </div>
 
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex flex-1 items-center justify-end space-x-2">
           <Button
             variant="ghost"
             size="icon"
@@ -88,7 +91,11 @@ export default function Header() {
 
           {user ? (
             <>
-              <div className="hidden md:flex">
+              <div className="hidden md:flex items-center space-x-2">
+                <Button variant="ghost" size="sm" onClick={() => setIsFeedbackDialogOpen(true)}>
+                    <MessageSquareText className="mr-2 h-4 w-4" />
+                    Feedback
+                </Button>
                 <Button variant="outline" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Post
@@ -153,12 +160,18 @@ export default function Header() {
               </DropdownMenu>
             </>
           ) : (
-            <Button
-              variant="ghost"
-              asChild
-            >
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
+            <>
+                <Button variant="ghost" size="sm" onClick={() => setIsFeedbackDialogOpen(true)}>
+                    <MessageSquareText className="mr-2 h-4 w-4" />
+                    Feedback
+                </Button>
+                <Button
+                variant="ghost"
+                asChild
+                >
+                <Link href="/sign-in">Sign In</Link>
+                </Button>
+            </>
           )}
 
           <Sheet>
@@ -177,10 +190,14 @@ export default function Header() {
                   BLOOM
                 </span>
               </Link>
-              <div className="mt-4">
+              <div className="mt-4 flex flex-col space-y-2">
                  <Button className="w-full" variant="outline" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Post
+                </Button>
+                <Button className="w-full" variant="ghost" size="sm" onClick={() => setIsFeedbackDialogOpen(true)}>
+                    <MessageSquareText className="mr-2 h-4 w-4" />
+                    Feedback
                 </Button>
               </div>
               <nav className="mt-4 flex flex-col space-y-4 text-lg font-medium">

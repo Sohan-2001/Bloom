@@ -212,3 +212,21 @@ export async function addComment(postId: string, userId: string, commentText: st
         return { success: false, error: "Failed to add comment." };
     }
 }
+
+
+export async function createFeedback(feedback: string) {
+    if (!feedback.trim()) {
+        return { success: false, error: "Feedback cannot be empty." };
+    }
+
+    try {
+        await addDoc(collection(db, "feedbacks"), {
+            feedback: feedback,
+            createdAt: serverTimestamp(),
+        });
+        return { success: true };
+    } catch (error) {
+        console.error("Error creating feedback:", error);
+        return { success: false, error: "Failed to submit feedback." };
+    }
+}

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { MessageCircle, Heart } from 'lucide-react';
+import { Timestamp } from 'firebase/firestore';
 
 interface PostCardProps {
   post: Post;
@@ -20,6 +21,12 @@ const getInitials = (name?: string | null) => {
       .map((n) => n[0])
       .join("");
   };
+
+  const formatDate = (timestamp: Post['createdAt']) => {
+    if (!timestamp) return 'Just now';
+    const date = new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
+    return date.toLocaleDateString();
+  }
 
 export function PostCard({ post }: PostCardProps) {
   return (
@@ -35,7 +42,7 @@ export function PostCard({ post }: PostCardProps) {
                     {post.user.name}
                 </Link>
                 <p className="text-xs text-muted-foreground">
-                    {post.createdAt?.toDate().toLocaleDateString()}
+                    {formatDate(post.createdAt)}
                 </p>
             </div>
         </div>

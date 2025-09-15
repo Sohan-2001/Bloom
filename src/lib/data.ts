@@ -19,7 +19,10 @@ export type Post = {
   category: string;
   likes: number;
   comments: Comment[];
-  createdAt: any;
+  createdAt: {
+    seconds: number;
+    nanoseconds: number;
+  } | null;
 };
 
 export const mockUsers: User[] = [

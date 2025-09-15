@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import Footer from '@/components/layout/footer';
+import Preloader from '@/components/preloader';
 
 const fontSans = Inter({
   subsets: ['latin'],
@@ -45,6 +46,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
+            <Preloader />
             <div className="flex flex-col min-h-screen">
               <div className="flex-grow">
                 {children}

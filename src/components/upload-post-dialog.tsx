@@ -109,10 +109,10 @@ export function UploadPostDialog({ open, setOpen }: UploadPostDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-xl max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] flex flex-col" aria-labelledby="dialog-title" aria-describedby="dialog-description">
         <DialogHeader>
-          <DialogTitle>Upload a new post</DialogTitle>
-          <DialogDescription>
+          <DialogTitle id="dialog-title">Upload a new post</DialogTitle>
+          <DialogDescription id="dialog-description">
             Share your latest creation with the community.
           </DialogDescription>
         </DialogHeader>

@@ -60,7 +60,7 @@ export default function Header() {
     <>
     <UploadPostDialog open={isUploadDialogOpen} setOpen={setIsUploadDialogOpen} />
     <FeedbackDialog open={isFeedbackDialogOpen} setOpen={setIsFeedbackDialogOpen} />
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-primary text-primary-foreground">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-primary text-secondary">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-4 flex items-center space-x-2">
@@ -68,7 +68,7 @@ export default function Header() {
               BLOOM
             </span>
           </Link>
-          <Button variant="secondary" size="sm" onClick={() => setIsUploadDialogOpen(true)}>
+          <Button style={{ backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }} size="sm" onClick={() => setIsUploadDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Post
           </Button>
@@ -77,7 +77,7 @@ export default function Header() {
               <Link
                 key={category}
                 href={`/category/${category.toLowerCase()}`}
-                className="transition-colors hover:text-primary-foreground/80 text-primary-foreground/60"
+                className="transition-colors hover:text-secondary/80 text-secondary/60"
               >
                 {category}
               </Link>

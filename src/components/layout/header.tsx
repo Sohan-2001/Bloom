@@ -77,7 +77,7 @@ export default function Header() {
               <Link
                 key={category}
                 href={`/category/${category.toLowerCase()}`}
-                className="transition-colors hover:text-secondary/80 text-secondary/60"
+                className="transition-colors hover:text-secondary/80"
               >
                 {category}
               </Link>

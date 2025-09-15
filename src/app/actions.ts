@@ -58,30 +58,24 @@ export type CreatePostInput = {
     userId: string;
     caption: string;
     category: string;
-    imageDataUri: string;
 };
 
 export async function createPost(input: CreatePostInput) {
-    const { userId, caption, category, imageDataUri } = input;
+    const { userId, caption, category } = input;
 
     try {
-        // 1. Upload image to Firebase Storage
-        const imageRef = ref(storage, `posts/${userId}/${Date.now()}`);
-        const uploadResult = await uploadString(imageRef, imageDataUri, 'data_url');
-        const imageUrl = await getDownloadURL(uploadResult.ref);
-
-        // 2. Create post document in Firestore
+        // Create post document in Firestore
         await addDoc(collection(db, "posts"), {
             userId: userId,
             caption: caption,
             category: category,
-            image: imageUrl,
+            image: `https://picsum.photos/seed/${Date.now()}/600/800`, // Placeholder
             createdAt: serverTimestamp(),
             likes: 0,
             comments: [],
         });
 
-        // 3. Revalidate path to show new post
+        // Revalidate path to show new post
         revalidatePath("/");
         revalidatePath(`/category/${category.toLowerCase()}`);
         revalidatePath(`/profile/${userId}`);

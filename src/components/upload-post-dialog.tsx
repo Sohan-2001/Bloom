@@ -18,7 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -32,10 +31,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useState, type Dispatch, type SetStateAction, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Upload } from "lucide-react";
-import Image from "next/image";
+import { Loader2 } from "lucide-react";
 import { createPost } from "@/app/actions";
 import { useAuth } from "@/hooks/use-auth";
+import { ScrollArea } from "./ui/scroll-area";
 
 
 const categories = ["Painting", "Photography", "Writing", "Music", "Crafts"];
@@ -43,7 +42,6 @@ const categories = ["Painting", "Photography", "Writing", "Music", "Crafts"];
 const formSchema = z.object({
   caption: z.string().min(1, "Caption is required.").max(280, "Caption is too long."),
   category: z.string({ required_error: "Please select a category." }),
-  image: z.any().refine(file => file, "Please upload an image."),
 });
 
 
@@ -55,7 +53,6 @@ interface UploadPostDialogProps {
 export function UploadPostDialog({ open, setOpen }: UploadPostDialogProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { user } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -64,23 +61,10 @@ export function UploadPostDialog({ open, setOpen }: UploadPostDialogProps) {
       caption: "",
     },
   });
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        form.setValue("image", file);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
   
   useEffect(() => {
     if (!open) {
       form.reset();
-      setImagePreview(null);
     }
   }, [open, form]);
 
@@ -93,11 +77,6 @@ export function UploadPostDialog({ open, setOpen }: UploadPostDialogProps) {
         });
         return;
     }
-    if (!imagePreview) {
-        form.setError("image", { type: "manual", message: "Please upload an image." });
-        return;
-    }
-
 
     setIsLoading(true);
     try {
@@ -105,7 +84,6 @@ export function UploadPostDialog({ open, setOpen }: UploadPostDialogProps) {
             userId: user.uid,
             caption: values.caption,
             category: values.category,
-            imageDataUri: imagePreview,
         });
 
       if (result.success) {
@@ -131,86 +109,60 @@ export function UploadPostDialog({ open, setOpen }: UploadPostDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Upload a new post</DialogTitle>
           <DialogDescription>
             Share your latest creation with the community.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="image"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image</FormLabel>
-                   <FormControl>
-                     <div className="relative flex justify-center items-center w-full h-64 border-2 border-dashed rounded-md cursor-pointer hover:border-primary transition-colors">
-                        {imagePreview ? (
-                            <Image src={imagePreview} alt="Image preview" fill className="object-contain rounded-md" />
-                        ) : (
-                            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                                <Upload className="h-8 w-8" />
-                                <span>Click to upload</span>
-                            </div>
-                        )}
-                        <Input
-                            type="file"
-                            accept="image/*"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            onChange={handleImageChange}
-                        />
-                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="caption"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Caption</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Tell us about your project..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Category</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <ScrollArea className="flex-1 pr-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="caption"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Caption</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
+                      <Textarea placeholder="Tell us about your project..." rows={5} {...field} />
                     </FormControl>
-                    <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem key={category} value={category}>{category}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Post
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem key={category} value={category}>{category}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <DialogFooter className="pt-4">
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Post
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

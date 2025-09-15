@@ -66,8 +66,10 @@ const FeaturedSection = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden sm:flex" />
-        <CarouselNext className="hidden sm:flex" />
+        <div className="flex justify-center items-center gap-2 mt-4">
+            <CarouselPrevious className="relative -left-0 top-0 translate-y-0" />
+            <CarouselNext className="relative -right-0 top-0 translate-y-0" />
+        </div>
       </Carousel>
     </section>
   )
@@ -103,8 +105,10 @@ const CategorySection = ({ category, posts }: { category: string, posts: Post[] 
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden sm:flex" />
-        <CarouselNext className="hidden sm:flex" />
+        <div className="flex justify-center items-center gap-2 mt-4">
+            <CarouselPrevious className="relative -left-0 top-0 translate-y-0" />
+            <CarouselNext className="relative -right-0 top-0 translate-y-0" />
+        </div>
       </Carousel>
     </section>
   );

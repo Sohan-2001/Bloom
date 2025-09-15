@@ -44,7 +44,7 @@ const formatDate = (timestamp: Post['createdAt']) => {
     return 'Just now';
 }
 
-const CommentSection = ({ comments, postId }: { comments: Comment[], postId: string }) => {
+const CommentSection = ({ comments, postId, category, profileUserId }: { comments: Comment[], postId: string, category: string, profileUserId: string }) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [commentText, setCommentText] = React.useState("");
@@ -59,7 +59,7 @@ const CommentSection = ({ comments, postId }: { comments: Comment[], postId: str
     if (!commentText.trim()) return;
 
     setIsSubmitting(true);
-    const result = await addComment(postId, user.uid, commentText);
+    const result = await addComment(postId, user.uid, commentText, category, profileUserId);
     if (result.success) {
       setCommentText("");
     } else {
@@ -182,7 +182,7 @@ export function PostCard({ post }: PostCardProps) {
       </CardFooter>
       {showComments && (
         <CardContent className="p-4 pt-0">
-          <CommentSection comments={post.comments} postId={post.id} />
+          <CommentSection comments={post.comments} postId={post.id} category={post.category} profileUserId={post.user.id} />
         </CardContent>
       )}
     </Card>

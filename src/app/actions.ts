@@ -173,8 +173,6 @@ export async function likePost(postId: string) {
             likes: increment(1)
         });
         revalidatePath('/');
-        revalidatePath('/category/.*');
-        revalidatePath('/profile/.*');
         return { success: true };
     } catch (error) {
         console.error("Error liking post:", error);
@@ -182,7 +180,7 @@ export async function likePost(postId: string) {
     }
 }
 
-export async function addComment(postId: string, userId: string, commentText: string) {
+export async function addComment(postId: string, userId: string, commentText: string, category: string, profileUserId: string) {
     if (!commentText.trim()) {
         return { success: false, error: "Comment cannot be empty." };
     }
@@ -202,8 +200,8 @@ export async function addComment(postId: string, userId: string, commentText: st
         });
         
         revalidatePath('/');
-        revalidatePath('/category/.*');
-        revalidatePath('/profile/.*');
+        revalidatePath(`/category/${category.toLowerCase()}`);
+        revalidatePath(`/profile/${profileUserId}`);
         
         return { success: true };
     } catch (error) {

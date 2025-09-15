@@ -26,6 +26,7 @@ import * as React from 'react';
 import { UploadPostDialog } from '../upload-post-dialog';
 import { useTheme } from "next-themes";
 import { FeedbackDialog } from "../feedback-dialog";
+import { RazorpayButton } from "../razorpay-button";
 
 const categories = [
   "All",
@@ -82,6 +83,7 @@ export default function Header() {
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <RazorpayButton />
           <Button
             variant="ghost"
             size="icon"

@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from './ui/alert-dialog';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface PostCardProps {
   post: Post;
@@ -129,6 +129,7 @@ export function PostCard({ post }: PostCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const pathname = usePathname();
+  const router = useRouter();
   
   const [optimisticLikes, setOptimisticLikes] = React.useState(post.likes);
   const [isLiked, setIsLiked] = React.useState(false);
@@ -136,7 +137,7 @@ export function PostCard({ post }: PostCardProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
   
-  const isPostPage = pathname.startsWith('/post/');
+  const isPostPage = pathname.includes('/post/');
   const isHomePage = pathname === '/';
 
   React.useEffect(() => {
@@ -212,21 +213,26 @@ export function PostCard({ post }: PostCardProps) {
     return category;
   };
   
-  const CardContentWrapper = ({children}: {children: React.ReactNode}) => {
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // a bit of a hack to prevent navigation when clicking on a link, button or dropdown
     if (isHomePage) {
-        return <Link href={`/post/${post.id}`} className="block h-full">{children}</Link>
+        const target = e.target as HTMLElement;
+        if (target.closest('a, button')) {
+            return;
+        }
+        router.push(`/post/${post.id}`);
     }
-    return <>{children}</>;
   }
-
 
   return (
     <>
-      <Card className={cn(
-          "flex flex-col border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full",
-          isHomePage && "h-48"
-      )}>
-        <CardContentWrapper>
+      <Card 
+        className={cn(
+            "flex flex-col border-none shadow-md hover:shadow-xl transition-shadow duration-300 w-full",
+            isHomePage && "h-48 cursor-pointer"
+        )}
+        onClick={handleCardClick}
+      >
          <CardHeader className="p-4 flex-row items-center justify-between">
           <div className="flex items-center space-x-3">
               <Avatar className="h-10 w-10">
@@ -274,7 +280,6 @@ export function PostCard({ post }: PostCardProps) {
            </div>
            <span className="text-xs text-muted-foreground">{truncateCategory(post.category)}</span>
         </CardFooter>
-        </CardContentWrapper>
         {showComments && (
           <CardContent className="p-4 pt-0">
             <CommentSection comments={post.comments} postId={post.id} category={post.category} profileUserId={post.user.id} />
@@ -300,3 +305,5 @@ export function PostCard({ post }: PostCardProps) {
     </>
   );
 }
+
+    

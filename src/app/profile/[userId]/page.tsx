@@ -91,7 +91,7 @@ export default function ProfilePage() {
                     </div>
                 </div>
                  <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <h2 className="text-2xl font-headline tracking-wider mb-6">Projects</h2>
+                    <h2 className="text-2xl font-headline tracking-wider mb-6">Posts</h2>
                      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                         {[...Array(5)].map((_, i) => <Skeleton key={i} className="aspect-[3/4] w-full" />)}
                     </div>
@@ -123,7 +123,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <h2 className="text-2xl font-headline tracking-wider mb-6">Projects</h2>
+              <h2 className="text-2xl font-headline tracking-wider mb-6">Posts</h2>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {userPosts.map((post) => (
                   <PostCard key={post.id} post={post} />

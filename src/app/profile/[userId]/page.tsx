@@ -78,7 +78,7 @@ export default function ProfilePage() {
     return (
         <div className="flex min-h-screen w-full flex-col">
             <Header />
-            <main className="flex-1">
+            <main className="flex-1 pt-14">
                  <div className="bg-card/30">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="flex flex-col md:flex-row items-center gap-8">
@@ -104,7 +104,7 @@ export default function ProfilePage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 pt-14">
         {user ? (
           <>
             <div className="bg-card/30">

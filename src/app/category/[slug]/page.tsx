@@ -37,7 +37,7 @@ export default function CategoryPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Header />
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 pt-20 sm:pt-22 md:pt-24">
         <div className="mx-auto max-w-7xl">
           <h1 className="text-4xl font-headline tracking-wider mb-8">{category}</h1>
            {isLoading ? (

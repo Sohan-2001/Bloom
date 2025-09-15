@@ -59,7 +59,7 @@ export default function Header() {
     <>
     <UploadPostDialog open={isUploadDialogOpen} setOpen={setIsUploadDialogOpen} />
     <FeedbackDialog open={isFeedbackDialogOpen} setOpen={setIsFeedbackDialogOpen} />
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-primary/80 text-secondary backdrop-blur-sm">
+    <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-primary/80 text-secondary backdrop-blur-sm">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-4 flex items-center space-x-2">

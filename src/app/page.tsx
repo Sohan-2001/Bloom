@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { PostCard } from '@/components/post-card';
-import { mockPosts } from '@/lib/data';
 import type { Post } from '@/lib/data';
 import Header from '@/components/layout/header';
 import Link from 'next/link';
@@ -11,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Image from 'next/image';
-import { getFeaturedPosts, type FeaturedPost } from './actions';
+import { getFeaturedPosts, type FeaturedPost, getPosts } from './actions';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const categories = ["All", "Painting", "Photography", "Writing", "Music", "Crafts"];
@@ -108,15 +107,43 @@ const CategorySection = ({ category, posts }: { category: string, posts: Post[] 
 
 
 export default function Home() {
+  const [posts, setPosts] = React.useState<Post[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      const fetchedPosts = await getPosts();
+      setPosts(fetchedPosts);
+      setIsLoading(false);
+    };
+
+    fetchPosts();
+  }, []);
+
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <FeaturedSection />
-          {categories.map(category => (
-            <CategorySection key={category} category={category} posts={mockPosts} />
-          ))}
+          {isLoading ? (
+             [...Array(categories.length)].map((_, i) => (
+              <section key={i} className="py-6 md:py-8">
+                <Skeleton className="h-8 w-48 mb-4" />
+                <div className="flex space-x-4">
+                  {[...Array(5)].map((_, j) => (
+                    <Skeleton key={j} className="h-64 w-48" />
+                  ))}
+                </div>
+              </section>
+             ))
+          ) : (
+            categories.map(category => (
+              <CategorySection key={category} category={category} posts={posts} />
+            ))
+          )}
         </div>
       </main>
     </div>

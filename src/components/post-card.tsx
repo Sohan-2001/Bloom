@@ -2,36 +2,60 @@
 "use client";
 
 import * as React from 'react';
-import Image from 'next/image';
 import type { Post } from '@/lib/data';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Button } from './ui/button';
+import { MessageCircle, Heart } from 'lucide-react';
 
 interface PostCardProps {
   post: Post;
 }
 
+const getInitials = (name?: string | null) => {
+    if (!name) return "";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
+  };
+
 export function PostCard({ post }: PostCardProps) {
   return (
-    <Card className="overflow-hidden transition-transform hover:scale-105 duration-300 border-none bg-card group">
-      <CardContent className="p-0">
-        <div className="relative aspect-[3/4]">
-          <Image
-            src={post.image}
-            alt={post.caption}
-            fill
-            data-ai-hint={post.imageHint}
-            className="object-cover"
-          />
-           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-           <div className="absolute bottom-0 left-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
-            <Link href={`/profile/${post.user.id}`} className="font-semibold text-sm text-white hover:underline">
-             {post.user.name}
-            </Link>
-             <p className="text-white/80 text-xs truncate">{post.caption}</p>
-           </div>
+    <Card className="flex flex-col h-full border-none shadow-md hover:shadow-xl transition-shadow duration-300">
+       <CardHeader className="p-4">
+        <div className="flex items-center space-x-3">
+            <Avatar className="h-10 w-10">
+                <AvatarImage src={post.user.avatar} alt={post.user.name} />
+                <AvatarFallback>{getInitials(post.user.name)}</AvatarFallback>
+            </Avatar>
+            <div>
+                 <Link href={`/profile/${post.user.id}`} className="font-semibold text-sm hover:underline">
+                    {post.user.name}
+                </Link>
+                <p className="text-xs text-muted-foreground">
+                    {post.createdAt?.toDate().toLocaleDateString()}
+                </p>
+            </div>
         </div>
+      </CardHeader>
+      <CardContent className="p-4 pt-0 flex-1">
+        <p className="text-foreground leading-relaxed">{post.caption}</p>
       </CardContent>
+      <CardFooter className="p-4 pt-0 flex justify-between items-center">
+         <div className="flex space-x-4 text-muted-foreground">
+            <Button variant="ghost" size="sm" className="flex items-center space-x-1">
+                <Heart className="h-4 w-4" />
+                <span>{post.likes}</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="flex items-center space-x-1">
+                <MessageCircle className="h-4 w-4" />
+                <span>{post.comments.length}</span>
+            </Button>
+         </div>
+         <span className="text-xs text-muted-foreground">{post.category}</span>
+      </CardFooter>
     </Card>
   );
 }

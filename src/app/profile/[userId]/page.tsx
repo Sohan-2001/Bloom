@@ -3,7 +3,7 @@
 
 import { PostCard } from "@/components/post-card";
 import Header from "@/components/layout/header";
-import { mockPosts, mockUsers, type User } from "@/lib/data";
+import { mockUsers, type User, type Post } from "@/lib/data";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,30 +11,24 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getPosts } from "@/app/actions";
 
 export default function ProfilePage() {
   const params = useParams();
   const userId = params.userId as string;
 
   const [user, setUser] = useState<User | null>(null);
+  const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserData = async () => {
       if (!userId) return;
 
       setIsLoading(true);
       
-      // First, try to find user in mock data for existing demo users
-      const mockUser = mockUsers.find(u => u.id === userId);
-      if (mockUser) {
-        setUser(mockUser);
-        setIsLoading(false);
-        return;
-      }
-      
-      // If not in mock data, fetch from Firestore
       try {
+        // Fetch user data from Firestore
         const userDocRef = doc(db, "users", userId);
         const userDocSnap = await getDoc(userDocRef);
 
@@ -47,29 +41,30 @@ export default function ProfilePage() {
             bio: data.bio,
           });
         } else {
-          // Fallback for the initial demo user u1 if a real user with that ID is not found.
-          const uidMap: { [key: string]: string } = {
-             "Z3M4IYo3d8ZXM1S4Vv1V9gYp2Xw2": "u1",
-          };
-          const mockUserId = uidMap[userId];
-          const foundUser = mockUsers.find((u) => u.id === mockUserId);
-          setUser(foundUser || null);
+            // Check mock users as a fallback for demo
+             const mockUser = mockUsers.find(u => u.id === userId);
+             if (mockUser) {
+                setUser(mockUser);
+             } else {
+                setUser(null);
+             }
         }
+
+        // Fetch user's posts
+        const allPosts = await getPosts();
+        const postsForUser = allPosts.filter(post => post.user.id === userId);
+        setUserPosts(postsForUser);
+
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error fetching user data:", error);
         setUser(null);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchUser();
+    fetchUserData();
   }, [userId]);
-
-
-  // For now, we'll continue to use mock posts.
-  // In a real app, you would fetch posts created by this user.
-  const userPosts = mockPosts.filter((post) => post.user.id === user?.id);
 
   const getInitials = (name?: string | null) => {
     if (!name) return "??";
@@ -153,4 +148,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-

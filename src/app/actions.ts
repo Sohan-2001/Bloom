@@ -3,8 +3,9 @@
 
 import { suggestProjectPrompts } from "@/ai/flows/ai-suggested-project-prompts";
 import type { SuggestProjectPromptsOutput } from "@/ai/flows/ai-suggested-project-prompts";
+import type { Post, User } from "@/lib/data";
 import { db, storage } from "@/lib/firebase";
-import { collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, getDoc, doc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { revalidatePath } from "next/cache";
 
@@ -69,7 +70,6 @@ export async function createPost(input: CreatePostInput) {
             userId: userId,
             caption: caption,
             category: category,
-            image: `https://picsum.photos/seed/${Date.now()}/600/800`, // Placeholder
             createdAt: serverTimestamp(),
             likes: 0,
             comments: [],
@@ -84,5 +84,47 @@ export async function createPost(input: CreatePostInput) {
     } catch (error) {
         console.error("Error creating post:", error);
         return { success: false, error: "Failed to create post." };
+    }
+}
+
+
+export async function getPosts(): Promise<Post[]> {
+    try {
+        const postsCollection = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(postsCollection);
+        
+        const posts: Post[] = await Promise.all(snapshot.docs.map(async (p) => {
+            const postData = p.data();
+            const userDoc = await getDoc(doc(db, "users", postData.userId));
+            
+            let user: User;
+            if (userDoc.exists()) {
+                 const userData = userDoc.data();
+                 user = {
+                    id: userData.uid,
+                    name: userData.displayName,
+                    avatar: userData.photoURL,
+                    bio: userData.bio,
+                 }
+            } else {
+                // Fallback user
+                user = { id: 'unknown', name: 'Unknown User', avatar: '', bio: '' };
+            }
+
+            return {
+                id: p.id,
+                user: user,
+                caption: postData.caption,
+                category: postData.category,
+                likes: postData.likes,
+                comments: postData.comments,
+                createdAt: postData.createdAt,
+            };
+        }));
+        
+        return posts;
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+        return [];
     }
 }
